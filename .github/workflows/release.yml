@@ -16,6 +16,12 @@ jobs:
         run: dotnet test tests/Tamarin.Core.Tests -c Release
       - name: Publish
         run: dotnet publish src/Tamarin.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o out
+      - name: Installer
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          $v = "${{ github.ref_name }}".TrimStart('v'); if ($v -notmatch '^\d') { $v = "0.0.0" }
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$v" installer\tamarin.iss
       - name: Zip
         run: Compress-Archive -Path out/Tamarin.exe -DestinationPath Tamarin-win-x64.zip
         shell: pwsh
@@ -24,6 +30,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
+            out/Tamarin-Setup.exe
             out/Tamarin.exe
             Tamarin-win-x64.zip
           generate_release_notes: true
