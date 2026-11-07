@@ -10,7 +10,7 @@ A small, free notepad for Windows. Press a shortcut in any program, type, close.
 - Daily backups, Markdown/text import and export, portable mode (`portable.flag`)
 - No account, no telemetry, no network code. Notes live in `%APPDATA%\Tamarin`.
 
-Planned, not built yet: notes as plain `.md` files in a folder, published memory/start-up numbers.
+Planned, not built yet: notes as plain `.md` files in a folder, memory numbers on more PCs.
 
 ## Download
 Latest build: [Releases](../../releases/latest).
