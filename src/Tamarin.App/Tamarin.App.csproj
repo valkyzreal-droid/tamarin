@@ -19,6 +19,8 @@
     <!-- WFAC010 asks for WinForms-style DPI setup; this is a WPF app and the manifest is the right place for it. -->
     <NoWarn>$(NoWarn);WFAC010</NoWarn>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- Single-file WPF: WPF's native DLLs must be bundled into the exe, or it dies at start-up with no window. -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <Description>Quick-capture notepad: one hotkey, type, close. Saved and searchable.</Description>
   </PropertyGroup>
 
