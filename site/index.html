@@ -40,7 +40,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:22p
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:-.02em;text-decoration:none}
 .brand img{width:28px;height:28px}
 nav{display:flex;align-items:center;gap:6px}
-nav a,nav button{font:600 14px/1 "Inter",sans-serif;color:var(--muted);text-decoration:none;background:none;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
+nav a,nav button{white-space:nowrap;font:600 14px/1 "Inter",sans-serif;color:var(--muted);text-decoration:none;background:none;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
 nav a:hover,nav button:hover{color:var(--text);background:var(--surface)}
 nav .lang{border:1px solid var(--line);color:var(--text)}
 
@@ -58,7 +58,7 @@ h1{font:700 clamp(40px,6.4vw,72px)/1.02 "Inter",sans-serif;letter-spacing:-.035e
 .facts{margin:18px 0 0;color:var(--muted);font-size:14px}
 
 /* stage: the one moving thing on the page */
-.stage{position:relative;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px}
+.stage{position:relative;min-height:340px;padding-bottom:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px}
 .keys{display:flex;gap:10px;align-items:center}
 .key{min-width:64px;padding:12px 16px;text-align:center;font:600 18px/1 "Inter",sans-serif;color:var(--text);
   background:var(--surface-2);border:1px solid #4a4e56;border-bottom-width:4px;border-radius:10px;
@@ -79,7 +79,7 @@ h1{font:700 clamp(40px,6.4vw,72px)/1.02 "Inter",sans-serif;letter-spacing:-.035e
   22%,86%{opacity:1;transform:none}
   94%,100%{opacity:0;transform:translateY(6px) scale(.99)}
 }
-.stage-note{position:absolute;bottom:0;left:0;right:0;text-align:center;color:var(--muted);font-size:13px}
+.stage-note{margin:0 auto 0 0;max-width:62%;text-align:left;color:var(--muted);font-size:13px}
 
 /* sections */
 section{padding:clamp(48px,8vw,88px) 0;border-top:1px solid var(--line)}
@@ -112,13 +112,43 @@ code{font:500 .9em ui-monospace,"Cascadia Mono",Consolas,monospace;background:va
 footer{border-top:1px solid var(--line);padding:32px 0 56px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
 footer a{text-underline-offset:3px}
 
+
+/* progress + reveal */
+#bar{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--accent);transform:scaleX(0);transform-origin:0 50%;z-index:50}
+.js .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:calc(var(--i,0)*90ms)}
+.js .reveal.in{opacity:1;transform:none}
+.steps li{border-top:0;position:relative}
+.steps li::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);transform-origin:0 50%;transition:transform .9s var(--ease);transition-delay:calc(var(--i,0)*90ms + .15s)}
+.js .steps li::after{transform:scaleX(0)}
+.js .steps li.in::after{transform:none}
+
+/* mascot */
+.mascot{position:absolute;right:-8px;bottom:-58px;width:clamp(96px,13vw,150px);transform:translateY(var(--py,0px));pointer-events:none;z-index:2}
+.tam{display:block;width:100%;height:auto;overflow:visible}
+.tam .tail{transform-box:fill-box;transform-origin:0 100%;animation:wag 3.2s ease-in-out infinite}
+.tam .wave{transform-box:fill-box;transform-origin:100% 100%;animation:wave 4.5s ease-in-out infinite}
+.tam .lid{transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0);animation:blink 5s infinite}
+.tam .pupil{transition:transform .12s ease-out}
+.tam .bob{animation:bob 3.6s ease-in-out infinite}
+@keyframes wag{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(9deg)}}
+@keyframes wave{0%,55%,100%{transform:rotate(0)}62%{transform:rotate(-16deg)}70%{transform:rotate(6deg)}78%{transform:rotate(-16deg)}86%{transform:rotate(0)}}
+@keyframes blink{0%,93%,100%{transform:scaleY(0)}96%{transform:scaleY(1)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.faq-head{position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;overflow:hidden}
+.faq-mascot{width:104px;flex:none;margin-bottom:-6px;transform:translateY(60%);transition:transform .9s var(--ease) .2s}
+.faq-mascot.in{transform:none}
 @media (max-width:860px){
   .hero,.split{grid-template-columns:1fr}
   .steps,.feat{grid-template-columns:1fr}
   .stage{min-height:300px}
+  nav a[href='#how']{display:none}
+  .mascot{bottom:-40px;width:92px}
 }
 @media (prefers-reduced-motion:reduce){
-  .key,.shot{animation:none}
+  .key,.shot,.tam *{animation:none!important}
+  .js .reveal{opacity:1;transform:none;transition:none}
+  .js .steps li::after{transform:none}
+  .faq-mascot{transform:none;transition:none}
   .shot{opacity:1}
   html{scroll-behavior:auto}
   .btn{transition:none}
@@ -126,6 +156,7 @@ footer a{text-underline-offset:3px}
 </style>
 </head>
 <body>
+<div id="bar" aria-hidden="true"></div>
 <div class="wrap">
 <header>
   <a class="brand" href="#top"><img src="favicon.svg" alt="" width="28" height="28"><span>tamarin</span></a>
@@ -157,6 +188,30 @@ footer a{text-underline-offset:3px}
     <figure class="shot">
       <img src="img/window.png" width="433" height="296" alt="The Tamarin window: a counter and buttons on top, an empty note with shortcut hints, and a saved status at the bottom.">
     </figure>
+    <div class="mascot" id="mascot">
+      <svg class="tam" viewBox="0 0 200 230" role="img" aria-label="Tamarin, the mascot: a small golden monkey holding a note">
+        <g class="bob">
+          <g class="tail"><path d="M150 192C198 192 206 142 178 124" fill="none" stroke="#e8891f" stroke-width="14" stroke-linecap="round"/></g>
+          <ellipse cx="74" cy="219" rx="18" ry="9" fill="#e8891f"/><ellipse cx="126" cy="219" rx="18" ry="9" fill="#e8891f"/>
+          <ellipse cx="100" cy="176" rx="46" ry="46" fill="#f2a33a"/>
+          <ellipse cx="100" cy="186" rx="28" ry="30" fill="#ffd58a"/>
+          <g transform="rotate(-8 130 172)"><rect x="106" y="146" width="50" height="58" rx="6" fill="#ececee"/><path d="M114 160h34M114 172h34M114 184h22" stroke="#7b9cff" stroke-width="3" stroke-linecap="round"/></g>
+          <circle cx="108" cy="192" r="8" fill="#e8891f"/><circle cx="154" cy="186" r="8" fill="#e8891f"/>
+          <g class="wave"><path d="M60 160Q30 152 34 114" fill="none" stroke="#f2a33a" stroke-width="14" stroke-linecap="round"/><circle cx="34" cy="108" r="9" fill="#e8891f"/></g>
+          <circle cx="100" cy="92" r="62" fill="#e8891f"/>
+          <circle cx="50" cy="84" r="13" fill="#e8891f"/><circle cx="150" cy="84" r="13" fill="#e8891f"/>
+          <circle cx="50" cy="84" r="6" fill="#4a3328"/><circle cx="150" cy="84" r="6" fill="#4a3328"/>
+          <ellipse cx="100" cy="96" rx="42" ry="40" fill="#4a3328"/>
+          <circle cx="82" cy="88" r="10" fill="#fff"/><circle cx="118" cy="88" r="10" fill="#fff"/>
+          <g class="pupil"><circle cx="82" cy="88" r="5.5" fill="#14110f"/><circle cx="84" cy="86" r="1.8" fill="#fff"/></g>
+          <g class="pupil"><circle cx="118" cy="88" r="5.5" fill="#14110f"/><circle cx="120" cy="86" r="1.8" fill="#fff"/></g>
+          <ellipse class="lid" cx="82" cy="88" rx="10.5" ry="10.5" fill="#4a3328"/><ellipse class="lid" cx="118" cy="88" rx="10.5" ry="10.5" fill="#4a3328"/>
+          <ellipse cx="100" cy="109" rx="20" ry="14" fill="#e8cdb0"/>
+          <ellipse cx="100" cy="103" rx="4.5" ry="3" fill="#4a3328"/>
+          <path d="M91 112Q100 121 109 112" fill="none" stroke="#4a3328" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </div>
     <p class="stage-note" data-i18n="shotnote">Real screenshot. The app follows your Windows language.</p>
   </div>
 </div>
@@ -212,7 +267,7 @@ footer a{text-underline-offset:3px}
 </section>
 
 <section id="faq">
-  <h2 data-i18n="faq_h">Questions</h2>
+  <div class="faq-head"><h2 data-i18n="faq_h">Questions</h2><div class="faq-mascot" id="faq-mascot" aria-hidden="true"></div></div>
   <details><summary data-i18n="q1">Windows says “Windows protected your PC”. Is it safe?</summary><p data-i18n="a1">The program is not code-signed yet, so Windows SmartScreen warns about any new unsigned program. Click “More info”, then “Run anyway”. If you prefer, read the code and build it yourself: the steps are in the repository.</p></details>
   <details><summary data-i18n="q2">Does it sync between computers?</summary><p data-i18n="a2">No. Notes stay on one PC. You can export them as Markdown and move them wherever you like.</p></details>
   <details><summary data-i18n="q3">Which Windows versions work?</summary><p data-i18n="a3">It is built for Windows 10 and 11, 64-bit. It has been tested on Windows 10 so far.</p></details>
@@ -317,6 +372,53 @@ footer a{text-underline-offset:3px}
     .catch(function () {});
 
   if (start === "pt") setLang("pt");
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement; root.classList.add("js");
+  var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // reveal targets, with a small stagger inside each group
+  var groups=[".steps li",".feat li",".facts-list li","details","section h2","section .sub",".menu-shot"];
+  groups.forEach(function(sel){
+    document.querySelectorAll(sel).forEach(function(el,i){
+      el.classList.add("reveal"); el.style.setProperty("--i",(i%4));
+    });
+  });
+  var io=("IntersectionObserver" in window)?new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){e.target.classList.add("in"); io.unobserve(e.target);} });
+  },{threshold:.15,rootMargin:"0px 0px -6% 0px"}):null;
+  document.querySelectorAll(".reveal,.faq-mascot").forEach(function(el){ io?io.observe(el):el.classList.add("in"); });
+
+  // second mascot: a copy of the first
+  var m=document.querySelector("#mascot svg"), fm=document.getElementById("faq-mascot");
+  if(m&&fm){ var c=m.cloneNode(true); c.removeAttribute("role"); c.setAttribute("aria-hidden","true"); fm.appendChild(c); }
+
+  // eyes follow the pointer
+  var pupils=[];
+  function collect(){ pupils=[].slice.call(document.querySelectorAll(".tam")).map(function(svg){return {svg:svg,els:svg.querySelectorAll(".pupil")};}); }
+  collect();
+  if(!reduce) addEventListener("pointermove",function(ev){
+    pupils.forEach(function(p){
+      var r=p.svg.getBoundingClientRect(); if(!r.width) return;
+      var cx=r.left+r.width*.5, cy=r.top+r.height*.4;
+      var dx=ev.clientX-cx, dy=ev.clientY-cy, d=Math.hypot(dx,dy)||1, k=Math.min(1,d/200)*3.5;
+      p.els.forEach(function(e){ e.style.transform="translate("+(dx/d*k)+"px,"+(dy/d*k)+"px)"; });
+    });
+  },{passive:true});
+
+  // progress bar and gentle parallax
+  var bar=document.getElementById("bar"), mas=document.getElementById("mascot"), tick=false;
+  function frame(){
+    tick=false;
+    var h=root.scrollHeight-innerHeight, y=scrollY;
+    bar.style.transform="scaleX("+(h>0?Math.min(1,y/h):0)+")";
+    if(mas&&!reduce) mas.style.setProperty("--py",(-Math.min(y,600)*.1)+"px");
+  }
+  addEventListener("scroll",function(){ if(!tick){tick=true;requestAnimationFrame(frame);} },{passive:true});
+  frame();
 })();
 </script>
 </body>
