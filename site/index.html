@@ -364,7 +364,8 @@ footer a{text-underline-offset:3px}
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (j) {
       if (!j || !j.assets) return;
-      var exe = j.assets.filter(function (a) { return /\.(exe|zip)$/i.test(a.name); })[0];
+      var list = j.assets.filter(function (a) { return /\.(exe|zip)$/i.test(a.name); });
+      var exe = list.filter(function (a) { return /setup/i.test(a.name); })[0] || list[0];
       if (!exe) return;
       rel = { tag: j.tag_name, url: exe.browser_download_url, size: exe.size };
       release(document.documentElement.lang);
