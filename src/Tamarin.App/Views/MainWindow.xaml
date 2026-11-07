@@ -1,0 +1,140 @@
+<Window x:Class="Tamarin.App.Views.MainWindow"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:ctl="clr-namespace:Tamarin.App.Controls"
+        Style="{StaticResource WindowBase}"
+        WindowStyle="None" ResizeMode="CanResize" ShowInTaskbar="False" ShowActivated="True"
+        MinWidth="{DynamicResource Window.MinWidth}" MinHeight="{DynamicResource Window.MinHeight}"
+        Width="{DynamicResource Window.Width}" Height="{DynamicResource Window.Height}"
+        PreviewKeyDown="OnWindowKeyDown" Closing="OnClosing">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="28" ResizeBorderThickness="6" GlassFrameThickness="1"
+                            CornerRadius="0" UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <!-- Not a transparent window on purpose: layered windows lose ClearType, and text is the product.
+         Windows draws the shadow (GlassFrameThickness) and, on Windows 11, the rounded corners. -->
+    <Border x:Name="Card" BorderBrush="{DynamicResource Brush.BorderInput}" BorderThickness="1"
+            Background="{DynamicResource Brush.Bg}">
+        <Grid x:Name="Body" RenderTransformOrigin="0.5,0.5">
+            <Grid.RenderTransform><TranslateTransform x:Name="BodyShift" /></Grid.RenderTransform>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Save line: pulses while saving, fades when saved, turns red on failure. Easy to miss, easy to trust. -->
+            <Rectangle x:Name="SaveLine" Height="2" VerticalAlignment="Top" RadiusX="1" RadiusY="1"
+                       Fill="{DynamicResource Brush.Accent}" Opacity="0" IsHitTestVisible="False" Panel.ZIndex="5" />
+
+            <!-- Top strip: position, older/newer on the left; new, search, pin, menu on the right. Doubles as the drag area. -->
+            <Grid Height="{DynamicResource Window.TopStrip}" Margin="8,0,4,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Button x:Name="OlderButton" Style="{StaticResource IconButton}" Content="&#xE76B;"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True" Click="OnOlder" />
+                    <TextBlock x:Name="Counter" Style="{StaticResource MutedText}" VerticalAlignment="Center"
+                               Margin="2,0" MinWidth="36" TextAlignment="Center" />
+                    <Button x:Name="NewerButton" Style="{StaticResource IconButton}" Content="&#xE76C;"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True" Click="OnNewer" />
+                    <TextBlock x:Name="AgeText" Style="{StaticResource MutedText}" VerticalAlignment="Center"
+                               Margin="10,0,0,0" TextWrapping="NoWrap" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="NewButton" Style="{StaticResource IconButton}" Content="&#xE710;"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True" Click="OnNew" />
+                    <Button x:Name="SearchButton" Style="{StaticResource IconButton}" Content="&#xE721;"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True" Click="OnSearchClick" />
+                    <ToggleButton x:Name="PinToggle" Style="{StaticResource IconToggle}" Content="&#xE718;"
+                                  shell:WindowChrome.IsHitTestVisibleInChrome="True" Click="OnPinClick" />
+                    <Button x:Name="MenuButton" Style="{StaticResource IconButton}" Content="&#xE712;"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True" Click="OnMenuClick">
+                        <Button.ContextMenu>
+                            <ContextMenu x:Name="MainMenu" Placement="Bottom" />
+                        </Button.ContextMenu>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Editor area with overlays -->
+            <Grid Grid.Row="1">
+                <TextBox x:Name="Editor" Style="{StaticResource EditorTextBox}"
+                         TextChanged="OnEditorTextChanged" PreviewKeyDown="OnEditorKeyDown"
+                         SpellCheck.IsEnabled="True" MaxLength="2000000" />
+                <StackPanel x:Name="HintPanel" IsHitTestVisible="False" Margin="13,10,0,0"
+                            VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <TextBlock x:Name="Hint" Foreground="{DynamicResource Brush.TextMuted}" />
+                    <StackPanel x:Name="HintTips" Margin="0,16,0,0" />
+                </StackPanel>
+
+                <!-- Save error -->
+                <Border x:Name="ErrorStrip" VerticalAlignment="Bottom" Visibility="Collapsed" Padding="12,6"
+                        Background="{DynamicResource Brush.Danger}">
+                    <DockPanel>
+                        <Button x:Name="RetryButton" DockPanel.Dock="Right" Click="OnRetry" MinHeight="24" />
+                        <TextBlock x:Name="ErrorText" Foreground="{DynamicResource Brush.OnAccent}" VerticalAlignment="Center"
+                                   AutomationProperties.LiveSetting="Assertive" />
+                    </DockPanel>
+                </Border>
+
+                <!-- Toast -->
+                <Border x:Name="Toast" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,12"
+                        RenderTransformOrigin="0.5,0.5"
+                        Padding="12,6" Visibility="Collapsed" Background="{DynamicResource Brush.Text}"
+                        CornerRadius="{DynamicResource Radius.Md}">
+                    <Border.RenderTransform><TranslateTransform x:Name="ToastShift" /></Border.RenderTransform>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="ToastText" Foreground="{DynamicResource Brush.Bg}" VerticalAlignment="Center"
+                                   AutomationProperties.LiveSetting="Polite" />
+                        <Button x:Name="ToastAction" Style="{StaticResource GhostButton}" Foreground="{DynamicResource Brush.Bg}"
+                                Margin="8,0,0,0" MinHeight="24" Visibility="Collapsed" Click="OnToastAction" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Search overlay -->
+                <Grid x:Name="SearchOverlay" Background="{DynamicResource Brush.Bg}" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="SearchBox" Margin="8,4,8,8" Height="{DynamicResource HitTargetMin}"
+                             TextChanged="OnSearchTextChanged" PreviewKeyDown="OnSearchKeyDown" />
+                    <ListBox x:Name="Results" Grid.Row="1" Margin="8,0,8,8" Style="{StaticResource ResultList}"
+                             ItemContainerStyle="{StaticResource ResultItem}" MouseDoubleClick="OnResultDoubleClick">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel LastChildFill="True">
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding When}" Style="{StaticResource MutedText}"
+                                               Margin="12,0,0,0" VerticalAlignment="Center" TextWrapping="NoWrap" />
+                                    <ctl:HighlightedTextBlock Snippet="{Binding Snippet}" TextTrimming="CharacterEllipsis"
+                                                              VerticalAlignment="Center" />
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock x:Name="NoResults" Grid.Row="1" Style="{StaticResource MutedText}"
+                               HorizontalAlignment="Center" Margin="0,24,0,0" VerticalAlignment="Top" Visibility="Collapsed" />
+                </Grid>
+            </Grid>
+
+            <!-- Status strip -->
+            <Grid Grid.Row="2" Height="{DynamicResource Window.StatusStrip}" Margin="14,0">
+                <TextBlock x:Name="StatusText" Style="{StaticResource MutedText}" VerticalAlignment="Center"
+                           HorizontalAlignment="Left" />
+                <TextBlock x:Name="WordCountText" Style="{StaticResource MutedText}" VerticalAlignment="Center"
+                           HorizontalAlignment="Right" Margin="0,0,18,0" />
+                <!-- Resize grip: the window can also be resized from any edge. -->
+                <Border x:Name="Grip" Width="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                        Margin="0,0,-10,2" Background="Transparent" Cursor="SizeNWSE"
+                        MouseLeftButtonDown="OnGripDown" ToolTip="{x:Static local:Strings.Resize}"
+                        xmlns:local="clr-namespace:Tamarin.App"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Path Data="M12,3 L3,12 M12,7 L7,12 M12,11 L11,12" Stroke="{DynamicResource Brush.TextMuted}"
+                          StrokeThickness="1.2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

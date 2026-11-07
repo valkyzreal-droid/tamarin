@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Tamarin.Core</RootNamespace>
+    <AssemblyName>Tamarin.Core</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Bundles a recent SQLite with FTS5 enabled, so search works on any Windows version. -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Migration 001. The single source of truth for the schema. -->
+    <EmbeddedResource Include="Db\001_initial.sql" LogicalName="Tamarin.Core.Db.001_initial.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Tamarin.Core.Tests" />
+  </ItemGroup>
+
+</Project>

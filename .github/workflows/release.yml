@@ -1,0 +1,29 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: "8.0.x" }
+      - name: Test
+        run: dotnet test tests/Tamarin.Core.Tests -c Release
+      - name: Publish
+        run: dotnet publish src/Tamarin.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o out
+      - name: Zip
+        run: Compress-Archive -Path out/Tamarin.exe -DestinationPath Tamarin-win-x64.zip
+        shell: pwsh
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            out/Tamarin.exe
+            Tamarin-win-x64.zip
+          generate_release_notes: true

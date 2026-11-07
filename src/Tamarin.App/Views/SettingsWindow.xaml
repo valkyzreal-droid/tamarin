@@ -1,0 +1,117 @@
+<Window x:Class="Tamarin.App.Views.SettingsWindow"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:Tamarin.App.Controls"
+        Style="{StaticResource WindowBase}"
+        Width="{DynamicResource SettingsWindow.Width}" Height="{DynamicResource SettingsWindow.Height}"
+        MinWidth="440" MinHeight="360"
+        WindowStartupLocation="CenterScreen">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="{StaticResource Inset.24}">
+
+            <TextBlock x:Name="GeneralTitle" Style="{StaticResource SectionTitle}" />
+
+            <!-- Hotkey -->
+            <Border Style="{StaticResource SettingsRow}">
+                <StackPanel>
+                    <TextBlock x:Name="HotkeyLabel" FontWeight="SemiBold" />
+                    <TextBlock x:Name="HotkeyHelp" Style="{StaticResource MutedText}" Margin="0,2,0,8" />
+                    <StackPanel Orientation="Horizontal">
+                        <ctl:HotkeyRecorder x:Name="Recorder" Style="{StaticResource {x:Type Button}}" />
+                        <Button x:Name="ResetHotkey" Style="{StaticResource GhostButton}" Margin="8,0,0,0" Click="OnResetHotkey" />
+                    </StackPanel>
+                    <TextBlock x:Name="HotkeyError" Foreground="{DynamicResource Brush.Danger}" Margin="0,6,0,0"
+                               TextWrapping="Wrap" Visibility="Collapsed" AutomationProperties.LiveSetting="Assertive" />
+                </StackPanel>
+            </Border>
+
+            <!-- Start with Windows -->
+            <Border Style="{StaticResource SettingsRow}">
+                <DockPanel>
+                    <ToggleButton x:Name="StartToggle" Style="{StaticResource ToggleSwitch}" DockPanel.Dock="Right"
+                                  Click="OnStartToggle" />
+                    <TextBlock x:Name="StartLabel" VerticalAlignment="Center" />
+                </DockPanel>
+            </Border>
+
+            <!-- Theme -->
+            <Border Style="{StaticResource SettingsRow}">
+                <StackPanel>
+                    <TextBlock x:Name="ThemeLabel" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton x:Name="ThemeSystem" GroupName="theme" Style="{StaticResource Segment}" Checked="OnTheme" Tag="system" />
+                        <RadioButton x:Name="ThemeLight" GroupName="theme" Style="{StaticResource Segment}" Checked="OnTheme" Tag="light" />
+                        <RadioButton x:Name="ThemeDark" GroupName="theme" Style="{StaticResource Segment}" Checked="OnTheme" Tag="dark" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Text size -->
+            <Border Style="{StaticResource SettingsRow}">
+                <StackPanel>
+                    <DockPanel>
+                        <TextBlock x:Name="SizeValue" DockPanel.Dock="Right" Style="{StaticResource MutedText}" />
+                        <TextBlock x:Name="SizeLabel" FontWeight="SemiBold" />
+                    </DockPanel>
+                    <Slider x:Name="SizeSlider" Minimum="11" Maximum="28" TickFrequency="1" IsSnapToTickEnabled="True"
+                            Margin="0,8,0,0" ValueChanged="OnSizeChanged" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock x:Name="DataTitle" Style="{StaticResource SectionTitle}" Margin="0,24,0,12" />
+
+            <!-- Data folder -->
+            <Border Style="{StaticResource SettingsRow}">
+                <StackPanel>
+                    <TextBlock x:Name="FolderLabel" FontWeight="SemiBold" />
+                    <TextBlock x:Name="FolderPath" Style="{StaticResource MutedText}" Margin="0,2,0,8" TextTrimming="CharacterEllipsis" />
+                    <Button x:Name="OpenFolderButton" HorizontalAlignment="Left" Click="OnOpenFolder" />
+                </StackPanel>
+            </Border>
+
+            <!-- Backup -->
+            <Border Style="{StaticResource SettingsRow}">
+                <StackPanel>
+                    <DockPanel>
+                        <ToggleButton x:Name="BackupToggle" Style="{StaticResource ToggleSwitch}" DockPanel.Dock="Right"
+                                      Click="OnBackupToggle" />
+                        <StackPanel>
+                            <TextBlock x:Name="BackupLabel" FontWeight="SemiBold" />
+                            <TextBlock x:Name="BackupHelp" Style="{StaticResource MutedText}" />
+                        </StackPanel>
+                    </DockPanel>
+                    <Button x:Name="BackupNowButton" HorizontalAlignment="Left" Margin="0,8,0,0" Click="OnBackupNow" />
+                </StackPanel>
+            </Border>
+
+            <!-- Trash retention -->
+            <Border Style="{StaticResource SettingsRow}">
+                <StackPanel>
+                    <TextBlock x:Name="RetentionLabel" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton x:Name="Keep7" GroupName="keep" Style="{StaticResource Segment}" Checked="OnRetention" Tag="7" />
+                        <RadioButton x:Name="Keep30" GroupName="keep" Style="{StaticResource Segment}" Checked="OnRetention" Tag="30" />
+                        <RadioButton x:Name="Keep90" GroupName="keep" Style="{StaticResource Segment}" Checked="OnRetention" Tag="90" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Export / import -->
+            <Border Style="{StaticResource SettingsRow}">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="ExportButton" Margin="0,0,8,0" Click="OnExportAll" />
+                    <Button x:Name="ImportButton" Click="OnImport" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock x:Name="Status" Margin="0,12,0,0" TextWrapping="Wrap" Foreground="{DynamicResource Brush.Success}"
+                       AutomationProperties.LiveSetting="Polite" />
+
+            <TextBlock x:Name="PrivacyTitle" Style="{StaticResource SectionTitle}" Margin="0,24,0,8" />
+            <TextBlock x:Name="PrivacyText" Style="{StaticResource MutedText}" />
+
+            <Button x:Name="CloseButton" Margin="0,24,0,0" HorizontalAlignment="Right" IsCancel="True" Click="OnClose" />
+        </StackPanel>
+    </ScrollViewer>
+</Window>

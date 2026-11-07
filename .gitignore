@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+publish/
+artifacts/
+tools/design/preview.html
+*.db
+*.db-wal
+*.db-shm

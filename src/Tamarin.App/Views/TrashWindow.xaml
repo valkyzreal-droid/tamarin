@@ -1,0 +1,35 @@
+<Window x:Class="Tamarin.App.Views.TrashWindow"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Style="{StaticResource WindowBase}"
+        Width="480" Height="420" MinWidth="360" MinHeight="260"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="{StaticResource Inset.16}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ListBox x:Name="List" Style="{StaticResource ResultList}" ItemContainerStyle="{StaticResource ResultItem}"
+                 SelectionChanged="OnSelectionChanged" AutomationProperties.Name="{x:Static local:Strings.TrashTitle}"
+                 xmlns:local="clr-namespace:Tamarin.App">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding When}" Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock x:Name="EmptyText" Style="{StaticResource MutedText}" HorizontalAlignment="Center"
+                   VerticalAlignment="Center" Visibility="Collapsed" />
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12,0,0">
+            <Button x:Name="RestoreButton" Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" Click="OnRestore" />
+            <Button x:Name="DeleteButton" Style="{StaticResource DangerButton}" Margin="0,0,8,0" Click="OnDelete" />
+            <Button x:Name="EmptyButton" Click="OnEmpty" />
+        </StackPanel>
+    </Grid>
+</Window>
