@@ -1,8 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  <rect x="16" y="16" width="224" height="224" rx="52" fill="#2F5BEA"/>
-  <rect x="64" y="56" width="128" height="144" rx="16" fill="#FFFFFF"/>
-  <rect x="84" y="84" width="88" height="12" rx="6" fill="#2F5BEA"/>
-  <rect x="84" y="112" width="88" height="12" rx="6" fill="#B8C6F5"/>
-  <rect x="84" y="140" width="56" height="12" rx="6" fill="#B8C6F5"/>
-  <rect x="148" y="140" width="6" height="12" rx="3" fill="#2F5BEA"/>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="#1C1D20"/>
+  <circle cx="128" cy="130" r="88" fill="#F2A33A"/>
+  <circle cx="52" cy="118" r="26" fill="#F2A33A"/>
+  <circle cx="204" cy="118" r="26" fill="#F2A33A"/>
+  <ellipse cx="128" cy="136" rx="58" ry="56" fill="#4A3328"/>
+  <circle cx="106" cy="124" r="11" fill="#FFFFFF"/>
+  <circle cx="150" cy="124" r="11" fill="#FFFFFF"/>
+  <circle cx="108" cy="126" r="5.5" fill="#14110F"/>
+  <circle cx="152" cy="126" r="5.5" fill="#14110F"/>
+  <ellipse cx="128" cy="160" rx="26" ry="19" fill="#E8CDB0"/>
+  <ellipse cx="128" cy="152" rx="6" ry="4" fill="#4A3328"/>
 </svg>
